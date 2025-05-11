@@ -49,17 +49,17 @@ jobs:
       with:
         ref: development
 
-    - name: Fetch Main Branch
+    - name: Fetch main Branch
       run: |
         git fetch origin main:main
         git checkout main
 
-    - name: Merge development to Main
+    - name: Merge development to main
       run: |
-        git merge development --no-ff -m "Auto-merge development into Main" --allow-unrelated-histories || true
+        git merge development --no-ff -m "Auto-merge development into main" --allow-unrelated-histories || true
         git checkout --theirs .
         git add .
-        git commit -m "Resolve all conflicts, auto-merge development into Main" || echo "No conflicts to commit"
+        git commit -m "Resolve all conflicts, auto-merge development into main" || echo "No conflicts to commit"
         git push origin mainsss
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TESTTOKEN }}
