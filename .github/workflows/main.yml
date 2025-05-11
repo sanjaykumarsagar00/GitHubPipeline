@@ -60,6 +60,6 @@ jobs:
         git checkout --theirs .
         git add .
         git commit -m "Resolve all conflicts, auto-merge development into main" || echo "No conflicts to commit"
-        git push origin mainsss
+        git push origin main
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
