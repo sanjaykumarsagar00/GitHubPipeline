@@ -1,28 +1,65 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
-name: .NET
+name: .NET CI + Auto-Merge
 
 on:
   push:
-    branches: [ "development" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - development
+
+permissions:
+  contents: write  # Ensure write permission for the token
 
 jobs:
+  # 🛠️ Build Job
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout development branch
+      uses: actions/checkout@v4
+      with:
+        ref: development
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
+
     - name: Restore dependencies
       run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+
+    - name: Build the project
+      run: dotnet build --no-restore --configuration Release
+
     - name: Test
       run: dotnet test --no-build --verbosity normal
+
+  # 🚀 Merge Job
+  merge:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout development branch
+      uses: actions/checkout@v4
+      with:
+        ref: development
+
+    - name: Fetch Main Branch
+      run: |
+        git fetch origin main:main
+        git checkout main
+
+    - name: Merge development to Main
+      run: |
+        git merge development --no-ff -m "Auto-merge development into Main" --allow-unrelated-histories || true
+        git checkout --theirs .
+        git add .
+        git commit -m "Resolve all conflicts, auto-merge development into Main" || echo "No conflicts to commit"
+        git push origin mainsss
+      env:
+        GITHUB_TOKEN: ${{ secrets.TESTTOKEN }}
