@@ -62,4 +62,4 @@ jobs:
         git commit -m "Resolve all conflicts, auto-merge development into Main" || echo "No conflicts to commit"
         git push origin mainsss
       env:
-        GITHUB_TOKEN: ${{ secrets.TESTTOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
